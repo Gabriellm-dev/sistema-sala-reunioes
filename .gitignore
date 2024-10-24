@@ -1,0 +1,57 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+**/pom.xml.tag
+**/pom.xml.releaseBackup
+**/pom.xml.versionsBackup
+**/pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+out/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Docker
+**/Dockerfile
+**/docker-compose.yml
+**/docker-compose.override.yml
+**/docker-compose.prod.yml
+**/docker-compose.dev.yml
+docker-compose.log
+docker-compose.override.log
+
+# Eclipse
+.settings/
+*.launch
+.metadata/
+.classpath
+.project
+bin/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# MongoDB data
+/data/db/
+
+# Others
+*.swp
+*.class
+*.jar
+*.war
+*.ear
