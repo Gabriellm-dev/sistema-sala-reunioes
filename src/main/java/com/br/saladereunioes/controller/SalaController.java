@@ -1,99 +1,72 @@
 package com.br.saladereunioes.controller;
 
-import org.bson.types.ObjectId;
 import com.br.saladereunioes.model.Sala;
 import com.br.saladereunioes.service.SalaService;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.List;
+
+@RestController
+@RequestMapping("/salas")
 public class SalaController {
-
     private final SalaService salaService;
 
     public SalaController(SalaService salaService) {
         this.salaService = salaService;
     }
 
-    public void createSala(String nome, int capacidade, String[] recursos, String status) {
-        if (nome == null || nome.isEmpty() || status == null || status.isEmpty()) {
-            System.out.println("Erro: Nome e status são obrigatórios.");
-            return;
-        }
-        try {
-            Sala sala = new Sala(nome, capacidade, recursos, status);
-            salaService.addSala(sala);
-            System.out.println("Sala '" + nome + "' criada com sucesso!");
-        } catch (Exception e) {
-            System.out.println("Erro ao criar a sala: " + e.getMessage());
-        }
+    @PostMapping
+    public ResponseEntity<Sala> addSala(@RequestBody Sala sala) {
+        sala.setAtiva(true);
+        Sala novaSala = salaService.addSala(sala);
+        return ResponseEntity.ok(novaSala);
     }
 
-    public void updateSala(ObjectId id, String nome, int capacidade, String[] recursos, String status) {
-        if (id == null) {
-            System.out.println("Erro: ID da sala é obrigatório para atualização.");
-            return;
+    @GetMapping("/{id}")
+    public ResponseEntity<Sala> getSalaById(@PathVariable String id) {
+        Sala sala = salaService.getSalaById(id);
+        if (sala == null) {
+            return ResponseEntity.notFound().build();
         }
-        try {
-            Sala sala = new Sala(nome, capacidade, recursos, status);
-            sala.setId(id);
-            salaService.updateSala(sala);
-            System.out.println("Sala com ID " + id + " atualizada com sucesso!");
-        } catch (Exception e) {
-            System.out.println("Erro ao atualizar a sala: " + e.getMessage());
-        }
+        return ResponseEntity.ok(sala);
     }
 
-    public void deleteSala(String id) {
-        if (id == null || id.isEmpty()) {
-            System.out.println("Erro: ID da sala é obrigatório para exclusão.");
-            return;
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateSala(@PathVariable String id, @RequestBody Sala sala) {
+        Sala salaExistente = salaService.getSalaById(id);
+        if (salaExistente == null) {
+            return ResponseEntity.notFound().build();
         }
-        try {
-            salaService.deleteSala(id);
-            System.out.println("Sala com ID " + id + " deletada com sucesso!");
-        } catch (Exception e) {
-            System.out.println("Erro ao deletar a sala: " + e.getMessage());
-        }
+        sala.setId(salaExistente.getId());
+        salaService.updateSala(sala);
+        return ResponseEntity.noContent().build();
     }
 
-    public void getSala(String id) {
-        if (id == null || id.isEmpty()) {
-            System.out.println("Erro: ID da sala é obrigatório para busca.");
-            return;
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSala(@PathVariable String id) {
+        Sala salaExistente = salaService.getSalaById(id);
+        if (salaExistente == null) {
+            return ResponseEntity.notFound().build();
         }
-        try {
-            Sala sala = salaService.getSala(id);
-            if (sala == null) {
-                System.out.println("Sala não encontrada.");
-            } else {
-                System.out.println("Sala encontrada: " +
-                        "\nNome: " + sala.getNome() +
-                        "\nCapacidade: " + sala.getCapacidade() +
-                        "\nRecursos: " + String.join(", ", sala.getRecursos()) +
-                        "\nStatus: " + sala.getStatus());
-            }
-        } catch (Exception e) {
-            System.out.println("Erro ao buscar a sala: " + e.getMessage());
-        }
+        salaService.deleteSala(id);
+        return ResponseEntity.noContent().build();
     }
 
-    public void deleteAll() {
-        try {
-            salaService.deleteAll();
-            System.out.println("Todas as salas foram deletadas.");
-        } catch (Exception e) {
-            System.out.println("Erro ao deletar todas as salas: " + e.getMessage());
-        }
+    @GetMapping("/disponiveis")
+    public ResponseEntity<List<Sala>> buscarSalasDisponiveis(
+            @RequestParam(value = "capacidade", required = false) Integer capacidade,
+            @RequestParam(value = "recursos", required = false) List<String> recursos,
+            @RequestParam(value = "data", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
+        List<Sala> salasDisponiveis = salaService.buscarSalasDisponiveis(capacidade, recursos, data);
+        return ResponseEntity.ok(salasDisponiveis);
     }
-
-    public void updateStatus(String id, String status, Integer capacidade, String[] recursos, String nome) {
-        if (id == null || id.isEmpty() || status == null || status.isEmpty()) {
-            System.out.println("Erro: ID e status são obrigatórios para atualização.");
-            return;
-        }
-        try {
-            salaService.updateStatus(id, status, capacidade, recursos, nome);
-            System.out.println("Status da sala com ID " + id + " atualizado com sucesso!");
-        } catch (Exception e) {
-            System.out.println("Erro ao atualizar o status da sala: " + e.getMessage());
-        }
+    
+    @GetMapping
+    public ResponseEntity<List<Sala>> getTodasSalas() {
+        List<Sala> todasSalas = salaService.getTodasSalas();
+        return ResponseEntity.ok(todasSalas);
     }
 }

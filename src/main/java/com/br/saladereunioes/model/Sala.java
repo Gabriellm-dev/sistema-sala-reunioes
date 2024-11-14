@@ -6,14 +6,15 @@ public class Sala {
     private ObjectId id;
     private String nome;
     private int capacidade;
-    private String[] recursos;
-    private String status;
+    private boolean ativa;
 
-    public Sala(String nome, int capacidade, String[] recursos, String status) {
+    public Sala() {
+    }
+
+    public Sala(String nome, int capacidade, boolean ativa) {
         this.nome = nome;
         this.capacidade = capacidade;
-        this.recursos = recursos;
-        this.status = status;
+        this.ativa = ativa;
     }
 
     public ObjectId getId() {
@@ -40,20 +41,16 @@ public class Sala {
         this.capacidade = capacidade;
     }
 
-    public String[] getRecursos() {
-        return recursos;
+    public boolean isAtiva() {
+        return ativa;
     }
 
-    public void setRecursos(String[] recursos) {
-        this.recursos = recursos;
+    public void setAtiva(boolean ativa) {
+        this.ativa = ativa;
     }
 
-    public String getStatus() {
-        return status;
+    @Override
+    public String toString() {
+        return "Sala{id=" + id + ", nome='" + nome + "', capacidade=" + capacidade + ", ativa=" + ativa + '}';
     }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
 }

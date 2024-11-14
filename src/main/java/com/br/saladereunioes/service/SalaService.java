@@ -2,51 +2,43 @@ package com.br.saladereunioes.service;
 
 import com.br.saladereunioes.model.Sala;
 import com.br.saladereunioes.repository.SalaRepository;
+import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
+
+@Service
 public class SalaService {
-
     private final SalaRepository salaRepository;
 
     public SalaService(SalaRepository salaRepository) {
         this.salaRepository = salaRepository;
     }
 
-    public void addSala(Sala sala) {
-        if (sala == null) {
-            throw new IllegalArgumentException("Sala não pode ser nula.");
-        }
-        salaRepository.addSala(sala);
+    public Sala addSala(Sala sala) {
+        return salaRepository.save(sala);
+    }
+
+    public Sala getSalaById(String id) {
+        return salaRepository.findById(id).orElse(null);
     }
 
     public void updateSala(Sala sala) {
-        if (sala == null || sala.getId() == null) {
-            throw new IllegalArgumentException("Sala e ID não podem ser nulos.");
-        }
-        salaRepository.updateSala(sala);
+        salaRepository.save(sala);
     }
 
-    public void deleteSala(Object id) {
-        if (id == null) {
-            throw new IllegalArgumentException("ID não pode ser nulo.");
-        }
-        salaRepository.deleteSala(id);
+    public void deleteSala(String id) {
+        salaRepository.deleteById(id);
     }
 
-    public Sala getSala(Object id) {
-        if (id == null) {
-            throw new IllegalArgumentException("ID não pode ser nulo.");
+    public List<Sala> buscarSalasDisponiveis(Integer capacidade, List<String> recursos, LocalDate data) {
+        if (recursos != null && !recursos.isEmpty()) {
+            return salaRepository.findByCapacidadeGreaterThanEqualAndAtivaTrueAndNomeIn(capacidade, recursos);
         }
-        return salaRepository.getSala(id);
+        return salaRepository.findByCapacidadeGreaterThanEqualAndAtivaTrue(capacidade);
     }
 
-    public void deleteAll() {
-        salaRepository.deleteAll();
-    }
-
-    public void updateStatus(Object id, String status, Integer capacidade, String[] recursos, String nome) {
-        if (id == null || status == null) {
-            throw new IllegalArgumentException("ID e status não podem ser nulos.");
-        }
-        salaRepository.updateStatus(id, status, capacidade, recursos, nome);
+    public List<Sala> getTodasSalas() {
+        return salaRepository.findAll();
     }
 }
