@@ -31,7 +31,7 @@ Este projeto é um sistema de gerenciamento de reservas de salas de reunião des
 1. Clone o repositório:
 
    ```bash
-   git clone https://github.com/seu-usuario/sistema-salas-reunioes.git
+   git clone https://github.com/gabriellm-dev/sistema-salas-reunioes.git
    cd sistema-salas-reunioes
    ```
 
